@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCCL MEAL MANAGEMENT</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+font-family:Arial,sans-serif;
+min-height:100vh;
+background:#f1f5f3;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px
+}
+
+.card{
+width:100%;
+max-width:400px;
+background:#fff;
+padding:28px 22px;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,.12)
+}
+
+.logo{
+text-align:center;
+font-size:38px;
+margin-bottom:8px
+}
+
+h1{
+text-align:center;
+font-size:23px;
+color:#123b2a;
+margin-bottom:5px
+}
+
+.sub{
+text-align:center;
+color:#777;
+font-size:13px;
+margin-bottom:22px
+}
+
+.tabs{
+display:flex;
+gap:5px;
+background:#eef2f0;
+padding:4px;
+border-radius:12px;
+margin-bottom:18px
+}
+
+.tabs button{
+flex:1;
+border:0;
+padding:11px;
+border-radius:9px;
+background:transparent;
+font-weight:bold
+}
+
+.tabs .active{
+background:#123b2a;
+color:white
+}
+
+label{
+display:block;
+font-size:14px;
+font-weight:bold;
+margin:12px 0 6px;
+color:#333
+}
+
+input{
+width:100%;
+padding:13px;
+border:1px solid #ddd;
+border-radius:10px;
+font-size:15px;
+outline:none
+}
+
+input:focus{
+border-color:#123b2a
+}
+
+.btn{
+width:100%;
+padding:14px;
+margin-top:20px;
+border:0;
+border-radius:11px;
+background:#123b2a;
+color:white;
+font-size:16px;
+font-weight:bold
+}
+
+.msg{
+text-align:center;
+font-size:14px;
+margin-top:14px;
+min-height:20px
+}
+
+.hidden{display:none}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<div class="logo">🍽️</div>
+
+<h1>CCCL MEAL MANAGEMENT</h1>
+
+<div class="sub">Smart Mess Management System</div>
+
+<div class="tabs">
+<button id="loginTab" class="active" onclick="loginPage()">Login</button>
+<button id="signupTab" onclick="signupPage()">Sign Up</button>
+</div>
+
+<div id="loginBox">
+
+<label>Email</label>
+<input id="loginEmail" type="email" placeholder="আপনার Email">
+
+<label>Password</label>
+<input id="loginPassword" type="password" placeholder="আপনার Password">
+
+<button class="btn" onclick="login()">Login</button>
+
+</div>
+
+<div id="signupBox" class="hidden">
+
+<label>নাম</label>
+<input id="name" type="text" placeholder="আপনার নাম">
+
+<label>Email</label>
+<input id="signupEmail" type="email" placeholder="আপনার Email">
+
+<label>Password</label>
+<input id="signupPassword" type="password" placeholder="কমপক্ষে ৬ অক্ষর">
+
+<button class="btn" onclick="signup()">Create Account</button>
+
+</div>
+
+<div id="msg" class="msg"></div>
+
+</div>
+
+<script>
+
+/* SUPABASE CONNECTION */
+
+const SUPABASE_URL = "https://angxlvyiytnzorehvlho.supabase.co";
+
+const SUPABASE_KEY = "sb_publishable_M6Q9lZ0zd5yayPEoEM-Jbg_Teh8oTHG";
+
+const db = supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+
+/* PAGE SWITCH */
+
+function loginPage(){
+
+document.getElementById("loginBox").classList.remove("hidden");
+document.getElementById("signupBox").classList.add("hidden");
+
+document.getElementById("loginTab").classList.add("active");
+document.getElementById("signupTab").classList.remove("active");
+
+clearMsg();
+}
+
+function signupPage(){
+
+document.getElementById("loginBox").classList.add("hidden");
+document.getElementById("signupBox").classList.remove("hidden");
+
+document.getElementById("loginTab").classList.remove("active");
+document.getElementById("signupTab").classList.add("active");
+
+clearMsg();
+}
+
+
+/* SIGN UP */
+
+async function signup(){
+
+const name=document.getElementById("name").value.trim();
+const email=document.getElementById("signupEmail").value.trim();
+const password=document.getElementById("signupPassword").value;
+
+if(!name || !email || !password){
+showMsg("সব তথ্য পূরণ করুন।",true);
+return;
+}
+
+if(password.length<6){
+showMsg("Password কমপক্ষে ৬ অক্ষরের হতে হবে।",true);
+return;
+}
+
+showMsg("Account তৈরি হচ্ছে...",false);
+
+const {data,error}=await db.auth.signUp({
+
+email:email,
+password:password,
+
+options:{
+data:{
+full_name:name
+}
+}
+
+});
+
+if(error){
+showMsg(error.message,true);
+return;
+}
+
+showMsg("Account সফলভাবে তৈরি হয়েছে! এখন Login করুন।",false);
+
+document.getElementById("name").value="";
+document.getElementById("signupEmail").value="";
+document.getElementById("signupPassword").value="";
+
+setTimeout(loginPage,1500);
+
+}
+
+
+/* LOGIN */
+
+async function login(){
+
+const email=document.getElementById("loginEmail").value.trim();
+const password=document.getElementById("loginPassword").value;
+
+if(!email || !password){
+showMsg("Email এবং Password দিন।",true);
+return;
+}
+
+showMsg("Login হচ্ছে...",false);
+
+const {data,error}=await db.auth.signInWithPassword({
+
+email:email,
+password:password
+
+});
+
+if(error){
+showMsg(error.message,true);
+return;
+}
+
+showMsg("Login সফল হয়েছে! 🎉",false);
+
+}
+
+
+/* MESSAGE */
+
+function showMsg(text,error){
+
+const box=document.getElementById("msg");
+
+box.textContent=text;
+
+box.style.color=error ? "#d32f2f" : "#16803c";
+
+}
+
+function clearMsg(){
+
+document.getElementById("msg").textContent="";
+
+}
+
+</script>
+
+</body>
+</html>
