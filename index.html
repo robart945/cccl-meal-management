@@ -2,82 +2,96 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>CCCL MEAL MANAGEMENT</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{
+box-sizing:border-box;
+margin:0;
+padding:0
+}
 
 body{
 font-family:Arial,sans-serif;
+background:#f3f7f5;
+color:#17221d;
+min-height:100vh
+}
+
+button{
+font-family:inherit;
+cursor:pointer
+}
+
+/* LOGIN */
+
+.auth-page{
 min-height:100vh;
-background:#f1f5f3;
 display:flex;
 align-items:center;
 justify-content:center;
 padding:20px
 }
 
-.card{
+.auth-card{
 width:100%;
-max-width:400px;
-background:#fff;
+max-width:410px;
+background:white;
 padding:28px 22px;
-border-radius:20px;
-box-shadow:0 10px 30px rgba(0,0,0,.12)
+border-radius:22px;
+box-shadow:0 12px 35px rgba(0,0,0,.12)
 }
 
 .logo{
 text-align:center;
-font-size:38px;
+font-size:40px;
 margin-bottom:8px
 }
 
-h1{
+.auth-card h1{
 text-align:center;
 font-size:23px;
-color:#123b2a;
+color:#104b35;
 margin-bottom:5px
 }
 
-.sub{
+.subtitle{
 text-align:center;
 color:#777;
 font-size:13px;
-margin-bottom:22px
+margin-bottom:24px
 }
 
 .tabs{
 display:flex;
-gap:5px;
-background:#eef2f0;
+background:#edf2ef;
 padding:4px;
 border-radius:12px;
-margin-bottom:18px
+margin-bottom:20px
 }
 
 .tabs button{
 flex:1;
 border:0;
-padding:11px;
+padding:12px;
 border-radius:9px;
 background:transparent;
 font-weight:bold
 }
 
-.tabs .active{
-background:#123b2a;
+.tabs button.active{
+background:#104b35;
 color:white
 }
 
 label{
 display:block;
-font-size:14px;
 font-weight:bold;
-margin:12px 0 6px;
-color:#333
+font-size:14px;
+margin:13px 0 6px
 }
 
 input{
@@ -90,140 +104,780 @@ outline:none
 }
 
 input:focus{
-border-color:#123b2a
+border-color:#104b35
 }
 
-.btn{
+.primary-btn{
 width:100%;
 padding:14px;
 margin-top:20px;
 border:0;
 border-radius:11px;
-background:#123b2a;
+background:#104b35;
 color:white;
 font-size:16px;
 font-weight:bold
 }
 
-.msg{
+.message{
 text-align:center;
-font-size:14px;
 margin-top:14px;
+font-size:14px;
 min-height:20px
 }
 
-.hidden{display:none}
+.hidden{
+display:none!important
+}
+
+
+/* DASHBOARD */
+
+.dashboard{
+display:none;
+min-height:100vh
+}
+
+.topbar{
+height:68px;
+background:#104b35;
+color:white;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 18px;
+position:sticky;
+top:0;
+z-index:10
+}
+
+.brand{
+font-size:18px;
+font-weight:bold
+}
+
+.brand small{
+display:block;
+font-size:10px;
+font-weight:normal;
+opacity:.8;
+margin-top:3px
+}
+
+.logout{
+border:1px solid rgba(255,255,255,.4);
+background:transparent;
+color:white;
+padding:8px 12px;
+border-radius:8px;
+font-size:13px
+}
+
+.content{
+max-width:1100px;
+margin:auto;
+padding:20px
+}
+
+.welcome{
+background:linear-gradient(135deg,#104b35,#19734f);
+color:white;
+padding:22px;
+border-radius:18px;
+margin-bottom:18px;
+box-shadow:0 8px 20px rgba(16,75,53,.18)
+}
+
+.welcome h2{
+font-size:22px;
+margin-bottom:7px
+}
+
+.welcome p{
+font-size:13px;
+opacity:.9
+}
+
+.section-title{
+font-size:18px;
+font-weight:bold;
+margin:22px 0 12px
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:12px
+}
+
+.stat{
+background:white;
+border-radius:15px;
+padding:17px;
+box-shadow:0 4px 15px rgba(0,0,0,.06)
+}
+
+.stat-icon{
+font-size:25px;
+margin-bottom:8px
+}
+
+.stat-title{
+font-size:12px;
+color:#777
+}
+
+.stat-value{
+font-size:21px;
+font-weight:bold;
+margin-top:4px;
+color:#104b35
+}
+
+.menu-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:12px
+}
+
+.menu-card{
+background:white;
+border:0;
+border-radius:15px;
+padding:20px 10px;
+box-shadow:0 4px 15px rgba(0,0,0,.06);
+text-align:center;
+transition:.15s
+}
+
+.menu-card:active{
+transform:scale(.97)
+}
+
+.menu-icon{
+font-size:30px;
+margin-bottom:9px
+}
+
+.menu-name{
+font-weight:bold;
+font-size:14px
+}
+
+.menu-desc{
+font-size:10px;
+color:#888;
+margin-top:4px
+}
+
+.notice{
+background:white;
+border-radius:15px;
+padding:18px;
+box-shadow:0 4px 15px rgba(0,0,0,.06)
+}
+
+.notice-row{
+display:flex;
+gap:12px;
+align-items:center;
+padding:10px 0;
+border-bottom:1px solid #eee
+}
+
+.notice-row:last-child{
+border-bottom:0
+}
+
+.notice-icon{
+font-size:22px
+}
+
+.notice-text{
+font-size:13px
+}
+
+.bottom-space{
+height:30px
+}
+
+@media(max-width:700px){
+
+.stats{
+grid-template-columns:repeat(2,1fr)
+}
+
+.menu-grid{
+grid-template-columns:repeat(2,1fr)
+}
+
+.content{
+padding:15px
+}
+
+.welcome h2{
+font-size:20px
+}
+
+}
+
+@media(min-width:701px){
+
+.content{
+padding-top:28px
+}
+
+}
 </style>
 </head>
 
 <body>
 
-<div class="card">
+
+<!-- =========================
+     LOGIN / SIGNUP
+========================= -->
+
+<div class="auth-page" id="authPage">
+
+<div class="auth-card">
 
 <div class="logo">🍽️</div>
 
 <h1>CCCL MEAL MANAGEMENT</h1>
 
-<div class="sub">Smart Mess Management System</div>
+<div class="subtitle">
+Smart Mess Management System
+</div>
+
 
 <div class="tabs">
-<button id="loginTab" class="active" onclick="loginPage()">Login</button>
-<button id="signupTab" onclick="signupPage()">Sign Up</button>
+
+<button id="loginTab"
+class="active"
+onclick="showLogin()">
+Login
+</button>
+
+<button id="signupTab"
+onclick="showSignup()">
+Sign Up
+</button>
+
 </div>
+
+
+<!-- LOGIN -->
 
 <div id="loginBox">
 
 <label>Email</label>
-<input id="loginEmail" type="email" placeholder="আপনার Email">
+
+<input
+id="loginEmail"
+type="email"
+placeholder="আপনার Email"
+>
 
 <label>Password</label>
-<input id="loginPassword" type="password" placeholder="আপনার Password">
 
-<button class="btn" onclick="login()">Login</button>
+<input
+id="loginPassword"
+type="password"
+placeholder="আপনার Password"
+>
+
+<button
+class="primary-btn"
+onclick="loginUser()">
+Login
+</button>
 
 </div>
+
+
+<!-- SIGNUP -->
 
 <div id="signupBox" class="hidden">
 
 <label>নাম</label>
-<input id="name" type="text" placeholder="আপনার নাম">
+
+<input
+id="signupName"
+type="text"
+placeholder="আপনার নাম"
+>
 
 <label>Email</label>
-<input id="signupEmail" type="email" placeholder="আপনার Email">
+
+<input
+id="signupEmail"
+type="email"
+placeholder="আপনার Email"
+>
 
 <label>Password</label>
-<input id="signupPassword" type="password" placeholder="কমপক্ষে ৬ অক্ষর">
 
-<button class="btn" onclick="signup()">Create Account</button>
+<input
+id="signupPassword"
+type="password"
+placeholder="কমপক্ষে ৬ অক্ষর"
+>
+
+<button
+class="primary-btn"
+onclick="signupUser()">
+Create Account
+</button>
 
 </div>
 
-<div id="msg" class="msg"></div>
+
+<div
+id="authMessage"
+class="message">
+</div>
 
 </div>
+
+</div>
+
+
+<!-- =========================
+     DASHBOARD
+========================= -->
+
+<div class="dashboard" id="dashboard">
+
+
+<div class="topbar">
+
+<div class="brand">
+🍽️ CCCL MEAL
+<small>MEAL MANAGEMENT</small>
+</div>
+
+<button
+class="logout"
+onclick="logoutUser()">
+Logout
+</button>
+
+</div>
+
+
+<div class="content">
+
+
+<!-- WELCOME -->
+
+<div class="welcome">
+
+<h2>
+স্বাগতম, <span id="userName">Member</span>! 👋
+</h2>
+
+<p>
+আপনার মেসের সব হিসাব এক জায়গায় পরিচালনা করুন।
+</p>
+
+</div>
+
+
+<!-- QUICK STATS -->
+
+<div class="section-title">
+📊 Quick Overview
+</div>
+
+<div class="stats">
+
+<div class="stat">
+
+<div class="stat-icon">🍚</div>
+
+<div class="stat-title">
+আজকের Meal
+</div>
+
+<div class="stat-value">
+0
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-icon">💰</div>
+
+<div class="stat-title">
+মোট খরচ
+</div>
+
+<div class="stat-value">
+৳ 0
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-icon">👥</div>
+
+<div class="stat-title">
+মোট সদস্য
+</div>
+
+<div class="stat-value">
+0
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="stat-icon">📈</div>
+
+<div class="stat-title">
+Meal Rate
+</div>
+
+<div class="stat-value">
+৳ 0
+</div>
+
+</div>
+
+</div>
+
+
+<!-- MENU -->
+
+<div class="section-title">
+⚡ Quick Menu
+</div>
+
+<div class="menu-grid">
+
+
+<button
+class="menu-card"
+onclick="comingSoon('Meal')">
+
+<div class="menu-icon">🍚</div>
+
+<div class="menu-name">
+Meal
+</div>
+
+<div class="menu-desc">
+খাবারের হিসাব
+</div>
+
+</button>
+
+
+<button
+class="menu-card"
+onclick="comingSoon('Expenses')">
+
+<div class="menu-icon">💰</div>
+
+<div class="menu-name">
+Expenses
+</div>
+
+<div class="menu-desc">
+মেসের খরচ
+</div>
+
+</button>
+
+
+<button
+class="menu-card"
+onclick="comingSoon('Payments')">
+
+<div class="menu-icon">💳</div>
+
+<div class="menu-name">
+Payments
+</div>
+
+<div class="menu-desc">
+জমা ও পরিশোধ
+</div>
+
+</button>
+
+
+<button
+class="menu-card"
+onclick="comingSoon('Members')">
+
+<div class="menu-icon">👥</div>
+
+<div class="menu-name">
+Members
+</div>
+
+<div class="menu-desc">
+সদস্য তালিকা
+</div>
+
+</button>
+
+
+<button
+class="menu-card"
+onclick="comingSoon('Reports')">
+
+<div class="menu-icon">📊</div>
+
+<div class="menu-name">
+Reports
+</div>
+
+<div class="menu-desc">
+মাসিক রিপোর্ট
+</div>
+
+</button>
+
+
+<button
+class="menu-card"
+onclick="comingSoon('Notice')">
+
+<div class="menu-icon">📢</div>
+
+<div class="menu-name">
+Notice
+</div>
+
+<div class="menu-desc">
+নোটিশ ও আপডেট
+</div>
+
+</button>
+
+
+<button
+class="menu-card"
+onclick="comingSoon('Shopping')">
+
+<div class="menu-icon">🛒</div>
+
+<div class="menu-name">
+Shopping
+</div>
+
+<div class="menu-desc">
+বাজারের তালিকা
+</div>
+
+</button>
+
+
+<button
+class="menu-card"
+onclick="comingSoon('Settings')">
+
+<div class="menu-icon">⚙️</div>
+
+<div class="menu-name">
+Settings
+</div>
+
+<div class="menu-desc">
+অ্যাকাউন্ট সেটিংস
+</div>
+
+</button>
+
+
+</div>
+
+
+<!-- NOTICE -->
+
+<div class="section-title">
+📢 Recent Updates
+</div>
+
+<div class="notice">
+
+<div class="notice-row">
+
+<div class="notice-icon">🔔</div>
+
+<div class="notice-text">
+CCCL MEAL MANAGEMENT-এ স্বাগতম!
+</div>
+
+</div>
+
+
+<div class="notice-row">
+
+<div class="notice-icon">🛠️</div>
+
+<div class="notice-text">
+Meal ও Expense Management শীঘ্রই যুক্ত হবে।
+</div>
+
+</div>
+
+
+<div class="notice-row">
+
+<div class="notice-icon">🚀</div>
+
+<div class="notice-text">
+সিস্টেম ধাপে ধাপে সম্পূর্ণ Smart Mess System-এ পরিণত হবে।
+</div>
+
+</div>
+
+</div>
+
+
+<div class="bottom-space"></div>
+
+</div>
+
+</div>
+
 
 <script>
 
-/* SUPABASE CONNECTION */
+/* =========================
+   SUPABASE
+========================= */
 
-const SUPABASE_URL = "https://angxlvyiytnzorehvlho.supabase.co";
+const SUPABASE_URL =
+"https://angxlvyiytnzorehvlho.supabase.co";
 
-const SUPABASE_KEY = "sb_publishable_M6Q9lZ0zd5yayPEoEM-Jbg_Teh8oTHG";
+const SUPABASE_KEY =
+"sb_publishable_M6Q9lZ0zd5yayPEoEM-Jbg_Teh8oTHG";
 
-const db = supabase.createClient(
+const db =
+supabase.createClient(
 SUPABASE_URL,
 SUPABASE_KEY
 );
 
 
-/* PAGE SWITCH */
+/* =========================
+   AUTH PAGE
+========================= */
 
-function loginPage(){
+function showLogin(){
 
-document.getElementById("loginBox").classList.remove("hidden");
-document.getElementById("signupBox").classList.add("hidden");
+document
+.getElementById("loginBox")
+.classList.remove("hidden");
 
-document.getElementById("loginTab").classList.add("active");
-document.getElementById("signupTab").classList.remove("active");
+document
+.getElementById("signupBox")
+.classList.add("hidden");
 
-clearMsg();
+document
+.getElementById("loginTab")
+.classList.add("active");
+
+document
+.getElementById("signupTab")
+.classList.remove("active");
+
+clearMessage();
+
 }
 
-function signupPage(){
 
-document.getElementById("loginBox").classList.add("hidden");
-document.getElementById("signupBox").classList.remove("hidden");
+function showSignup(){
 
-document.getElementById("loginTab").classList.remove("active");
-document.getElementById("signupTab").classList.add("active");
+document
+.getElementById("loginBox")
+.classList.add("hidden");
 
-clearMsg();
+document
+.getElementById("signupBox")
+.classList.remove("hidden");
+
+document
+.getElementById("loginTab")
+.classList.remove("active");
+
+document
+.getElementById("signupTab")
+.classList.add("active");
+
+clearMessage();
+
 }
 
 
-/* SIGN UP */
+/* =========================
+   SIGN UP
+========================= */
 
-async function signup(){
+async function signupUser(){
 
-const name=document.getElementById("name").value.trim();
-const email=document.getElementById("signupEmail").value.trim();
-const password=document.getElementById("signupPassword").value;
+const name =
+document
+.getElementById("signupName")
+.value
+.trim();
+
+const email =
+document
+.getElementById("signupEmail")
+.value
+.trim();
+
+const password =
+document
+.getElementById("signupPassword")
+.value;
+
 
 if(!name || !email || !password){
-showMsg("সব তথ্য পূরণ করুন।",true);
+
+showMessage(
+"সব তথ্য পূরণ করুন।",
+true
+);
+
 return;
 }
 
-if(password.length<6){
-showMsg("Password কমপক্ষে ৬ অক্ষরের হতে হবে।",true);
+
+if(password.length < 6){
+
+showMessage(
+"Password কমপক্ষে ৬ অক্ষরের হতে হবে।",
+true
+);
+
 return;
 }
 
-showMsg("Account তৈরি হচ্ছে...",false);
 
-const {data,error}=await db.auth.signUp({
+showMessage(
+"Account তৈরি হচ্ছে...",
+false
+);
+
+
+const {error} =
+await db.auth.signUp({
 
 email:email,
+
 password:password,
 
 options:{
@@ -234,70 +888,231 @@ full_name:name
 
 });
 
+
 if(error){
-showMsg(error.message,true);
+
+showMessage(
+error.message,
+true
+);
+
 return;
 }
 
-showMsg("Account সফলভাবে তৈরি হয়েছে! এখন Login করুন।",false);
 
-document.getElementById("name").value="";
-document.getElementById("signupEmail").value="";
-document.getElementById("signupPassword").value="";
+showMessage(
+"Account তৈরি হয়েছে! এখন Login করুন।",
+false
+);
 
-setTimeout(loginPage,1500);
+
+document
+.getElementById("signupName")
+.value="";
+
+document
+.getElementById("signupEmail")
+.value="";
+
+document
+.getElementById("signupPassword")
+.value="";
+
+
+setTimeout(
+showLogin,
+1500
+);
 
 }
 
 
-/* LOGIN */
+/* =========================
+   LOGIN
+========================= */
 
-async function login(){
+async function loginUser(){
 
-const email=document.getElementById("loginEmail").value.trim();
-const password=document.getElementById("loginPassword").value;
+const email =
+document
+.getElementById("loginEmail")
+.value
+.trim();
+
+const password =
+document
+.getElementById("loginPassword")
+.value;
+
 
 if(!email || !password){
-showMsg("Email এবং Password দিন।",true);
+
+showMessage(
+"Email এবং Password দিন।",
+true
+);
+
 return;
 }
 
-showMsg("Login হচ্ছে...",false);
 
-const {data,error}=await db.auth.signInWithPassword({
+showMessage(
+"Login হচ্ছে...",
+false
+);
+
+
+const {data,error} =
+await db.auth.signInWithPassword({
 
 email:email,
+
 password:password
 
 });
 
+
 if(error){
-showMsg(error.message,true);
+
+showMessage(
+error.message,
+true
+);
+
 return;
 }
 
-showMsg("Login সফল হয়েছে! 🎉",false);
+
+openDashboard(
+data.user
+);
 
 }
 
 
-/* MESSAGE */
+/* =========================
+   DASHBOARD
+========================= */
 
-function showMsg(text,error){
+function openDashboard(user){
 
-const box=document.getElementById("msg");
+document
+.getElementById("authPage")
+.style.display="none";
+
+document
+.getElementById("dashboard")
+.style.display="block";
+
+
+const name =
+user?.user_metadata?.full_name
+|| user?.email?.split("@")[0]
+|| "Member";
+
+
+document
+.getElementById("userName")
+.textContent=name;
+
+}
+
+
+/* =========================
+   CHECK SESSION
+========================= */
+
+async function checkSession(){
+
+const {
+data
+} =
+await db.auth.getSession();
+
+
+if(data.session){
+
+openDashboard(
+data.session.user
+);
+
+}
+
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+async function logoutUser(){
+
+await db.auth.signOut();
+
+document
+.getElementById("dashboard")
+.style.display="none";
+
+document
+.getElementById("authPage")
+.style.display="flex";
+
+showLogin();
+
+}
+
+
+/* =========================
+   MESSAGE
+========================= */
+
+function showMessage(
+text,
+isError
+){
+
+const box =
+document
+.getElementById("authMessage");
 
 box.textContent=text;
 
-box.style.color=error ? "#d32f2f" : "#16803c";
+box.style.color =
+isError
+? "#d32f2f"
+: "#16803c";
 
 }
 
-function clearMsg(){
 
-document.getElementById("msg").textContent="";
+function clearMessage(){
+
+document
+.getElementById("authMessage")
+.textContent="";
 
 }
+
+
+/* =========================
+   TEMPORARY MENU
+========================= */
+
+function comingSoon(page){
+
+alert(
+page +
+" বিভাগটি আমরা পরের ধাপে তৈরি করব। 🚀"
+);
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+checkSession();
 
 </script>
 
