@@ -8,1112 +8,544 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{
-box-sizing:border-box;
-margin:0;
-padding:0
-}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f3f7f5;color:#17221d;min-height:100vh}
+button{font-family:inherit;cursor:pointer}
 
-body{
-font-family:Arial,sans-serif;
-background:#f3f7f5;
-color:#17221d;
-min-height:100vh
-}
-
-button{
-font-family:inherit;
-cursor:pointer
-}
-
-/* LOGIN */
-
-.auth-page{
-min-height:100vh;
-display:flex;
-align-items:center;
-justify-content:center;
-padding:20px
-}
-
-.auth-card{
-width:100%;
-max-width:410px;
-background:white;
-padding:28px 22px;
-border-radius:22px;
-box-shadow:0 12px 35px rgba(0,0,0,.12)
-}
-
-.logo{
-text-align:center;
-font-size:40px;
-margin-bottom:8px
-}
-
-.auth-card h1{
-text-align:center;
-font-size:23px;
-color:#104b35;
-margin-bottom:5px
-}
-
-.subtitle{
-text-align:center;
-color:#777;
-font-size:13px;
-margin-bottom:24px
-}
-
-.tabs{
-display:flex;
-background:#edf2ef;
-padding:4px;
-border-radius:12px;
-margin-bottom:20px
-}
-
-.tabs button{
-flex:1;
-border:0;
-padding:12px;
-border-radius:9px;
-background:transparent;
-font-weight:bold
-}
-
-.tabs button.active{
-background:#104b35;
-color:white
-}
-
-label{
-display:block;
-font-weight:bold;
-font-size:14px;
-margin:13px 0 6px
-}
-
-input{
-width:100%;
-padding:13px;
-border:1px solid #ddd;
-border-radius:10px;
-font-size:15px;
-outline:none
-}
-
-input:focus{
-border-color:#104b35
-}
-
-.primary-btn{
-width:100%;
-padding:14px;
-margin-top:20px;
-border:0;
-border-radius:11px;
-background:#104b35;
-color:white;
-font-size:16px;
-font-weight:bold
-}
-
-.message{
-text-align:center;
-margin-top:14px;
-font-size:14px;
-min-height:20px
-}
-
-.hidden{
-display:none!important
-}
-
+/* AUTH */
+.auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.auth-card{width:100%;max-width:410px;background:white;padding:28px 22px;border-radius:22px;box-shadow:0 12px 35px rgba(0,0,0,.12)}
+.logo{text-align:center;font-size:40px;margin-bottom:8px}
+.auth-card h1{text-align:center;font-size:23px;color:#104b35;margin-bottom:5px}
+.subtitle{text-align:center;color:#777;font-size:13px;margin-bottom:24px}
+.tabs{display:flex;background:#edf2ef;padding:4px;border-radius:12px;margin-bottom:20px}
+.tabs button{flex:1;border:0;padding:12px;border-radius:9px;background:transparent;font-weight:bold}
+.tabs button.active{background:#104b35;color:white}
+label{display:block;font-weight:bold;font-size:14px;margin:13px 0 6px}
+input, select{width:100%;padding:13px;border:1px solid #ddd;border-radius:10px;font-size:15px;outline:none;background:white}
+input:focus, select:focus{border-color:#104b35}
+.primary-btn{width:100%;padding:14px;margin-top:20px;border:0;border-radius:11px;background:#104b35;color:white;font-size:16px;font-weight:bold}
+.message{text-align:center;margin-top:14px;font-size:14px;min-height:20px}
+.hidden{display:none!important}
 
 /* DASHBOARD */
+.dashboard{display:none;min-height:100vh}
+.topbar{height:68px;background:#104b35;color:white;display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:sticky;top:0;z-index:10}
+.brand{font-size:18px;font-weight:bold}
+.brand small{display:block;font-size:10px;font-weight:normal;opacity:.8;margin-top:3px}
+.logout{border:1px solid rgba(255,255,255,.4);background:transparent;color:white;padding:8px 12px;border-radius:8px;font-size:13px}
+.content{max-width:1100px;margin:auto;padding:20px}
+.welcome{background:linear-gradient(135deg,#104b35,#19734f);color:white;padding:22px;border-radius:18px;margin-bottom:18px;box-shadow:0 8px 20px rgba(16,75,53,.18)}
+.welcome h2{font-size:22px;margin-bottom:7px}
+.welcome p{font-size:13px;opacity:.9}
+.section-title{font-size:18px;font-weight:bold;margin:22px 0 12px}
 
-.dashboard{
-display:none;
-min-height:100vh
-}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{background:white;border-radius:15px;padding:17px;box-shadow:0 4px 15px rgba(0,0,0,.06)}
+.stat-icon{font-size:25px;margin-bottom:8px}
+.stat-title{font-size:12px;color:#777}
+.stat-value{font-size:21px;font-weight:bold;margin-top:4px;color:#104b35}
 
-.topbar{
-height:68px;
-background:#104b35;
-color:white;
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:0 18px;
-position:sticky;
-top:0;
-z-index:10
-}
+.menu-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.menu-card{background:white;border:0;border-radius:15px;padding:20px 10px;box-shadow:0 4px 15px rgba(0,0,0,.06);text-align:center;transition:.15s}
+.menu-card:active{transform:scale(.97)}
+.menu-icon{font-size:30px;margin-bottom:9px}
+.menu-name{font-weight:bold;font-size:14px}
+.menu-desc{font-size:10px;color:#888;margin-top:4px}
 
-.brand{
-font-size:18px;
-font-weight:bold
-}
+/* MODAL & TABLES */
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:100}
+.modal-card{background:white;width:100%;max-width:550px;border-radius:20px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,0.2);max-height:90vh;overflow-y:auto}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.modal-header h3{color:#104b35;font-size:18px}
+.close-btn{background:none;border:0;font-size:20px;cursor:pointer}
 
-.brand small{
-display:block;
-font-size:10px;
-font-weight:normal;
-opacity:.8;
-margin-top:3px
-}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th, td{padding:10px;text-align:left;border-bottom:1px solid #eee;font-size:14px}
+th{color:#104b35;background:#f9f9f9}
 
-.logout{
-border:1px solid rgba(255,255,255,.4);
-background:transparent;
-color:white;
-padding:8px 12px;
-border-radius:8px;
-font-size:13px
-}
-
-.content{
-max-width:1100px;
-margin:auto;
-padding:20px
-}
-
-.welcome{
-background:linear-gradient(135deg,#104b35,#19734f);
-color:white;
-padding:22px;
-border-radius:18px;
-margin-bottom:18px;
-box-shadow:0 8px 20px rgba(16,75,53,.18)
-}
-
-.welcome h2{
-font-size:22px;
-margin-bottom:7px
-}
-
-.welcome p{
-font-size:13px;
-opacity:.9
-}
-
-.section-title{
-font-size:18px;
-font-weight:bold;
-margin:22px 0 12px
-}
-
-.stats{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:12px
-}
-
-.stat{
-background:white;
-border-radius:15px;
-padding:17px;
-box-shadow:0 4px 15px rgba(0,0,0,.06)
-}
-
-.stat-icon{
-font-size:25px;
-margin-bottom:8px
-}
-
-.stat-title{
-font-size:12px;
-color:#777
-}
-
-.stat-value{
-font-size:21px;
-font-weight:bold;
-margin-top:4px;
-color:#104b35
-}
-
-.menu-grid{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:12px
-}
-
-.menu-card{
-background:white;
-border:0;
-border-radius:15px;
-padding:20px 10px;
-box-shadow:0 4px 15px rgba(0,0,0,.06);
-text-align:center;
-transition:.15s
-}
-
-.menu-card:active{
-transform:scale(.97)
-}
-
-.menu-icon{
-font-size:30px;
-margin-bottom:9px
-}
-
-.menu-name{
-font-weight:bold;
-font-size:14px
-}
-
-.menu-desc{
-font-size:10px;
-color:#888;
-margin-top:4px
-}
-
-.notice{
-background:white;
-border-radius:15px;
-padding:18px;
-box-shadow:0 4px 15px rgba(0,0,0,.06)
-}
-
-.notice-row{
-display:flex;
-gap:12px;
-align-items:center;
-padding:10px 0;
-border-bottom:1px solid #eee
-}
-
-.notice-row:last-child{
-border-bottom:0
-}
-
-.notice-icon{
-font-size:22px
-}
-
-.notice-text{
-font-size:13px
-}
-
-.bottom-space{
-height:30px
-}
+.notice{background:white;border-radius:15px;padding:18px;box-shadow:0 4px 15px rgba(0,0,0,.06)}
+.notice-row{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid #eee}
+.notice-row:last-child{border-bottom:0}
+.notice-icon{font-size:22px}
+.notice-text{font-size:13px}
+.bottom-space{height:30px}
 
 @media(max-width:700px){
-
-.stats{
-grid-template-columns:repeat(2,1fr)
-}
-
-.menu-grid{
-grid-template-columns:repeat(2,1fr)
-}
-
-.content{
-padding:15px
-}
-
-.welcome h2{
-font-size:20px
-}
-
-}
-
-@media(min-width:701px){
-
-.content{
-padding-top:28px
-}
-
+.stats{grid-template-columns:repeat(2,1fr)}
+.menu-grid{grid-template-columns:repeat(2,1fr)}
+.content{padding:15px}
+.welcome h2{font-size:20px}
 }
 </style>
 </head>
 
 <body>
 
-
-<!-- =========================
-     LOGIN / SIGNUP
-========================= -->
-
+<!-- AUTH PAGE -->
 <div class="auth-page" id="authPage">
+  <div class="auth-card">
+    <div class="logo">🍽️</div>
+    <h1>CCCL MEAL</h1>
+    <div class="subtitle">Smart Mess Management System</div>
 
-<div class="auth-card">
+    <div class="tabs">
+      <button id="loginTab" class="active" onclick="showLogin()">Login</button>
+      <button id="signupTab" onclick="showSignup()">Sign Up</button>
+    </div>
 
-<div class="logo">🍽️</div>
+    <div id="loginBox">
+      <label>Email</label>
+      <input id="loginEmail" type="email" placeholder="আপনার Email">
+      <label>Password</label>
+      <input id="loginPassword" type="password" placeholder="আপনার Password">
+      <button class="primary-btn" onclick="loginUser()">Login</button>
+    </div>
 
-<h1>CCCL MEAL MANAGEMENT</h1>
+    <div id="signupBox" class="hidden">
+      <label>নাম</label>
+      <input id="signupName" type="text" placeholder="আপনার নাম">
+      <label>Email</label>
+      <input id="signupEmail" type="email" placeholder="আপনার Email">
+      <label>Password</label>
+      <input id="signupPassword" type="password" placeholder="কমপক্ষে ৬ অক্ষর">
+      <button class="primary-btn" onclick="signupUser()">Create Account</button>
+    </div>
 
-<div class="subtitle">
-Smart Mess Management System
+    <div id="authMessage" class="message"></div>
+  </div>
 </div>
 
-
-<div class="tabs">
-
-<button id="loginTab"
-class="active"
-onclick="showLogin()">
-Login
-</button>
-
-<button id="signupTab"
-onclick="showSignup()">
-Sign Up
-</button>
-
-</div>
-
-
-<!-- LOGIN -->
-
-<div id="loginBox">
-
-<label>Email</label>
-
-<input
-id="loginEmail"
-type="email"
-placeholder="আপনার Email"
->
-
-<label>Password</label>
-
-<input
-id="loginPassword"
-type="password"
-placeholder="আপনার Password"
->
-
-<button
-class="primary-btn"
-onclick="loginUser()">
-Login
-</button>
-
-</div>
-
-
-<!-- SIGNUP -->
-
-<div id="signupBox" class="hidden">
-
-<label>নাম</label>
-
-<input
-id="signupName"
-type="text"
-placeholder="আপনার নাম"
->
-
-<label>Email</label>
-
-<input
-id="signupEmail"
-type="email"
-placeholder="আপনার Email"
->
-
-<label>Password</label>
-
-<input
-id="signupPassword"
-type="password"
-placeholder="কমপক্ষে ৬ অক্ষর"
->
-
-<button
-class="primary-btn"
-onclick="signupUser()">
-Create Account
-</button>
-
-</div>
-
-
-<div
-id="authMessage"
-class="message">
-</div>
-
-</div>
-
-</div>
-
-
-<!-- =========================
-     DASHBOARD
-========================= -->
-
+<!-- DASHBOARD -->
 <div class="dashboard" id="dashboard">
+  <div class="topbar">
+    <div class="brand">
+      🍽️ CCCL MEAL
+      <small>MEAL MANAGEMENT</small>
+    </div>
+    <button class="logout" onclick="logoutUser()">Logout</button>
+  </div>
 
+  <div class="content">
+    <div class="welcome">
+      <h2>স্বাগতম, <span id="userName">Member</span>! 👋</h2>
+      <p>আপনার মেসের সব হিসাব এক জায়গায় পরিচালনা করুন।</p>
+    </div>
 
-<div class="topbar">
+    <div class="section-title">📊 Quick Overview</div>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-icon">🍚</div>
+        <div class="stat-title">আজকের Total Meal</div>
+        <div class="stat-value" id="totalMealsStat">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-icon">💰</div>
+        <div class="stat-title">মোট খরচ</div>
+        <div class="stat-value" id="totalExpenseStat">৳ 0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-icon">👥</div>
+        <div class="stat-title">মোট সদস্য</div>
+        <div class="stat-value" id="totalMembersStat">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-icon">📈</div>
+        <div class="stat-title">Meal Rate</div>
+        <div class="stat-value" id="mealRateStat">৳ 0</div>
+      </div>
+    </div>
 
-<div class="brand">
-🍽️ CCCL MEAL
-<small>MEAL MANAGEMENT</small>
+    <div class="section-title">⚡ Quick Menu</div>
+    <div class="menu-grid">
+      <button class="menu-card" onclick="openMealModal()">
+        <div class="menu-icon">🍚</div>
+        <div class="menu-name">Meal</div>
+        <div class="menu-desc">মিলের হিসাব</div>
+      </button>
+
+      <button class="menu-card" onclick="openExpenseModal()">
+        <div class="menu-icon">💰</div>
+        <div class="menu-name">Expenses</div>
+        <div class="menu-desc">মেসের খরচ</div>
+      </button>
+
+      <button class="menu-card" onclick="openPaymentModal()">
+        <div class="menu-icon">💳</div>
+        <div class="menu-name">Payments</div>
+        <div class="menu-desc">জমা ও পরিশোধ</div>
+      </button>
+
+      <button class="menu-card" onclick="openMembersModal()">
+        <div class="menu-icon">👥</div>
+        <div class="menu-name">Members</div>
+        <div class="menu-desc">সদস্য তালিকা</div>
+      </button>
+
+      <button class="menu-card" onclick="comingSoon('Reports')">
+        <div class="menu-icon">📊</div>
+        <div class="menu-name">Reports</div>
+        <div class="menu-desc">মাসিক রিপোর্ট</div>
+      </button>
+
+      <button class="menu-card" onclick="openNoticeModal()">
+        <div class="menu-icon">📢</div>
+        <div class="menu-name">Notice</div>
+        <div class="menu-desc">নোটিশ ও আপডেট</div>
+      </button>
+
+      <button class="menu-card" onclick="openShoppingModal()">
+        <div class="menu-icon">🛒</div>
+        <div class="menu-name">Shopping</div>
+        <div class="menu-desc">বাজারের তালিকা</div>
+      </button>
+
+      <button class="menu-card" onclick="comingSoon('Settings')">
+        <div class="menu-icon">⚙️</div>
+        <div class="menu-name">Settings</div>
+        <div class="menu-desc">অ্যাকাউন্ট সেটিংস</div>
+      </button>
+    </div>
+
+    <div class="section-title">📢 Recent Updates</div>
+    <div class="notice">
+      <div class="notice-row">
+        <div class="notice-icon">🔔</div>
+        <div class="notice-text">শপিং লিস্ট ও নোটিশ বোর্ড ফিচার সফলভাবে যুক্ত হয়েছে!</div>
+      </div>
+    </div>
+    <div class="bottom-space"></div>
+  </div>
 </div>
 
-<button
-class="logout"
-onclick="logoutUser()">
-Logout
-</button>
-
-</div>
-
-
-<div class="content">
-
-
-<!-- WELCOME -->
-
-<div class="welcome">
-
-<h2>
-স্বাগতম, <span id="userName">Member</span>! 👋
-</h2>
-
-<p>
-আপনার মেসের সব হিসাব এক জায়গায় পরিচালনা করুন।
-</p>
-
-</div>
-
-
-<!-- QUICK STATS -->
-
-<div class="section-title">
-📊 Quick Overview
-</div>
-
-<div class="stats">
-
-<div class="stat">
-
-<div class="stat-icon">🍚</div>
-
-<div class="stat-title">
-আজকের Meal
-</div>
-
-<div class="stat-value">
-0
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-icon">💰</div>
-
-<div class="stat-title">
-মোট খরচ
-</div>
-
-<div class="stat-value">
-৳ 0
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-icon">👥</div>
-
-<div class="stat-title">
-মোট সদস্য
-</div>
-
-<div class="stat-value">
-0
-</div>
-
-</div>
-
-
-<div class="stat">
-
-<div class="stat-icon">📈</div>
-
-<div class="stat-title">
-Meal Rate
-</div>
-
-<div class="stat-value">
-৳ 0
-</div>
-
-</div>
-
-</div>
-
-
-<!-- MENU -->
-
-<div class="section-title">
-⚡ Quick Menu
-</div>
-
-<div class="menu-grid">
-
-
-<button
-class="menu-card"
-onclick="comingSoon('Meal')">
-
-<div class="menu-icon">🍚</div>
-
-<div class="menu-name">
-Meal
-</div>
-
-<div class="menu-desc">
-খাবারের হিসাব
-</div>
-
-</button>
-
-
-<button
-class="menu-card"
-onclick="comingSoon('Expenses')">
-
-<div class="menu-icon">💰</div>
-
-<div class="menu-name">
-Expenses
-</div>
-
-<div class="menu-desc">
-মেসের খরচ
-</div>
-
-</button>
-
-
-<button
-class="menu-card"
-onclick="comingSoon('Payments')">
-
-<div class="menu-icon">💳</div>
-
-<div class="menu-name">
-Payments
-</div>
-
-<div class="menu-desc">
-জমা ও পরিশোধ
-</div>
-
-</button>
-
-
-<button
-class="menu-card"
-onclick="comingSoon('Members')">
-
-<div class="menu-icon">👥</div>
-
-<div class="menu-name">
-Members
-</div>
-
-<div class="menu-desc">
-সদস্য তালিকা
-</div>
-
-</button>
-
-
-<button
-class="menu-card"
-onclick="comingSoon('Reports')">
-
-<div class="menu-icon">📊</div>
-
-<div class="menu-name">
-Reports
-</div>
-
-<div class="menu-desc">
-মাসিক রিপোর্ট
-</div>
-
-</button>
-
-
-<button
-class="menu-card"
-onclick="comingSoon('Notice')">
-
-<div class="menu-icon">📢</div>
-
-<div class="menu-name">
-Notice
-</div>
-
-<div class="menu-desc">
-নোটিশ ও আপডেট
-</div>
-
-</button>
-
-
-<button
-class="menu-card"
-onclick="comingSoon('Shopping')">
-
-<div class="menu-icon">🛒</div>
-
-<div class="menu-name">
-Shopping
-</div>
-
-<div class="menu-desc">
-বাজারের তালিকা
-</div>
-
-</button>
-
-
-<button
-class="menu-card"
-onclick="comingSoon('Settings')">
-
-<div class="menu-icon">⚙️</div>
-
-<div class="menu-name">
-Settings
-</div>
-
-<div class="menu-desc">
-অ্যাকাউন্ট সেটিংস
-</div>
-
-</button>
-
-
-</div>
-
-
-<!-- NOTICE -->
-
-<div class="section-title">
-📢 Recent Updates
-</div>
-
-<div class="notice">
-
-<div class="notice-row">
-
-<div class="notice-icon">🔔</div>
-
-<div class="notice-text">
-CCCL MEAL MANAGEMENT-এ স্বাগতম!
-</div>
-
-</div>
-
-
-<div class="notice-row">
-
-<div class="notice-icon">🛠️</div>
-
-<div class="notice-text">
-Meal ও Expense Management শীঘ্রই যুক্ত হবে।
-</div>
-
-</div>
-
-
-<div class="notice-row">
-
-<div class="notice-icon">🚀</div>
-
-<div class="notice-text">
-সিস্টেম ধাপে ধাপে সম্পূর্ণ Smart Mess System-এ পরিণত হবে।
-</div>
-
-</div>
-
-</div>
-
-
-<div class="bottom-space"></div>
-
-</div>
-
-</div>
-
+<!-- MODAL CONTAINER -->
+<div id="modalContainer"></div>
 
 <script>
+const SUPABASE_URL = "https://angxlvyiytnzorehvlho.supabase.co";
+const SUPABASE_KEY = "sb_publishable_M6Q9lZ0zd5yayPEoEM-Jbg_Teh8oTHG";
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-/* =========================
-   SUPABASE
-========================= */
-
-const SUPABASE_URL =
-"https://angxlvyiytnzorehvlho.supabase.co";
-
-const SUPABASE_KEY =
-"sb_publishable_M6Q9lZ0zd5yayPEoEM-Jbg_Teh8oTHG";
-
-const db =
-supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
-);
-
-
-/* =========================
-   AUTH PAGE
-========================= */
+let currentUser = null;
 
 function showLogin(){
-
-document
-.getElementById("loginBox")
-.classList.remove("hidden");
-
-document
-.getElementById("signupBox")
-.classList.add("hidden");
-
-document
-.getElementById("loginTab")
-.classList.add("active");
-
-document
-.getElementById("signupTab")
-.classList.remove("active");
-
-clearMessage();
-
+  document.getElementById("loginBox").classList.remove("hidden");
+  document.getElementById("signupBox").classList.add("hidden");
+  document.getElementById("loginTab").classList.add("active");
+  document.getElementById("signupTab").classList.remove("active");
+  clearMessage();
 }
-
 
 function showSignup(){
-
-document
-.getElementById("loginBox")
-.classList.add("hidden");
-
-document
-.getElementById("signupBox")
-.classList.remove("hidden");
-
-document
-.getElementById("loginTab")
-.classList.remove("active");
-
-document
-.getElementById("signupTab")
-.classList.add("active");
-
-clearMessage();
-
+  document.getElementById("loginBox").classList.add("hidden");
+  document.getElementById("signupBox").classList.remove("hidden");
+  document.getElementById("loginTab").classList.remove("active");
+  document.getElementById("signupTab").classList.add("active");
+  clearMessage();
 }
-
-
-/* =========================
-   SIGN UP
-========================= */
 
 async function signupUser(){
+  const name = document.getElementById("signupName").value.trim();
+  const email = document.getElementById("signupEmail").value.trim();
+  const password = document.getElementById("signupPassword").value;
 
-const name =
-document
-.getElementById("signupName")
-.value
-.trim();
+  if(!name || !email || !password){ showMessage("সব তথ্য পূরণ করুন।", true); return; }
+  if(password.length < 6){ showMessage("Password কমপক্ষে ৬ অক্ষরের হতে হবে।", true); return; }
 
-const email =
-document
-.getElementById("signupEmail")
-.value
-.trim();
+  showMessage("Account তৈরি হচ্ছে...", false);
+  const {data, error} = await db.auth.signUp({
+    email, password, options: { data: { full_name: name } }
+  });
 
-const password =
-document
-.getElementById("signupPassword")
-.value;
+  if(error){ showMessage(error.message, true); return; }
 
+  if(data.user){
+    await db.from('profiles').upsert([{ id: data.user.id, full_name: name, email: email }]);
+  }
 
-if(!name || !email || !password){
-
-showMessage(
-"সব তথ্য পূরণ করুন।",
-true
-);
-
-return;
+  showMessage("Account তৈরি হয়েছে! এখন Login করুন।", false);
+  document.getElementById("signupName").value="";
+  document.getElementById("signupEmail").value="";
+  document.getElementById("signupPassword").value="";
+  setTimeout(showLogin, 1500);
 }
-
-
-if(password.length < 6){
-
-showMessage(
-"Password কমপক্ষে ৬ অক্ষরের হতে হবে।",
-true
-);
-
-return;
-}
-
-
-showMessage(
-"Account তৈরি হচ্ছে...",
-false
-);
-
-
-const {error} =
-await db.auth.signUp({
-
-email:email,
-
-password:password,
-
-options:{
-data:{
-full_name:name
-}
-}
-
-});
-
-
-if(error){
-
-showMessage(
-error.message,
-true
-);
-
-return;
-}
-
-
-showMessage(
-"Account তৈরি হয়েছে! এখন Login করুন।",
-false
-);
-
-
-document
-.getElementById("signupName")
-.value="";
-
-document
-.getElementById("signupEmail")
-.value="";
-
-document
-.getElementById("signupPassword")
-.value="";
-
-
-setTimeout(
-showLogin,
-1500
-);
-
-}
-
-
-/* =========================
-   LOGIN
-========================= */
 
 async function loginUser(){
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
 
-const email =
-document
-.getElementById("loginEmail")
-.value
-.trim();
+  if(!email || !password){ showMessage("Email এবং Password দিন।", true); return; }
 
-const password =
-document
-.getElementById("loginPassword")
-.value;
-
-
-if(!email || !password){
-
-showMessage(
-"Email এবং Password দিন।",
-true
-);
-
-return;
+  showMessage("Login হচ্ছে...", false);
+  const {data, error} = await db.auth.signInWithPassword({email, password});
+  if(error){ showMessage(error.message, true); return; }
+  
+  openDashboard(data.user);
 }
-
-
-showMessage(
-"Login হচ্ছে...",
-false
-);
-
-
-const {data,error} =
-await db.auth.signInWithPassword({
-
-email:email,
-
-password:password
-
-});
-
-
-if(error){
-
-showMessage(
-error.message,
-true
-);
-
-return;
-}
-
-
-openDashboard(
-data.user
-);
-
-}
-
-
-/* =========================
-   DASHBOARD
-========================= */
 
 function openDashboard(user){
+  currentUser = user;
+  document.getElementById("authPage").style.display="none";
+  document.getElementById("dashboard").style.display="block";
 
-document
-.getElementById("authPage")
-.style.display="none";
-
-document
-.getElementById("dashboard")
-.style.display="block";
-
-
-const name =
-user?.user_metadata?.full_name
-|| user?.email?.split("@")[0]
-|| "Member";
-
-
-document
-.getElementById("userName")
-.textContent=name;
-
+  const name = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Member";
+  document.getElementById("userName").textContent = name;
+  loadDashboardData();
 }
-
-
-/* =========================
-   CHECK SESSION
-========================= */
 
 async function checkSession(){
-
-const {
-data
-} =
-await db.auth.getSession();
-
-
-if(data.session){
-
-openDashboard(
-data.session.user
-);
-
+  const {data} = await db.auth.getSession();
+  if(data.session){ openDashboard(data.session.user); }
 }
-
-}
-
-
-/* =========================
-   LOGOUT
-========================= */
 
 async function logoutUser(){
-
-await db.auth.signOut();
-
-document
-.getElementById("dashboard")
-.style.display="none";
-
-document
-.getElementById("authPage")
-.style.display="flex";
-
-showLogin();
-
+  await db.auth.signOut();
+  currentUser = null;
+  document.getElementById("dashboard").style.display="none";
+  document.getElementById("authPage").style.display="flex";
+  showLogin();
 }
 
-
-/* =========================
-   MESSAGE
-========================= */
-
-function showMessage(
-text,
-isError
-){
-
-const box =
-document
-.getElementById("authMessage");
-
-box.textContent=text;
-
-box.style.color =
-isError
-? "#d32f2f"
-: "#16803c";
-
+function showMessage(text, isError){
+  const box = document.getElementById("authMessage");
+  box.textContent = text;
+  box.style.color = isError ? "#d32f2f" : "#16803c";
 }
-
 
 function clearMessage(){
-
-document
-.getElementById("authMessage")
-.textContent="";
-
+  document.getElementById("authMessage").textContent="";
 }
 
+/* DASHBOARD STATS */
+async function loadDashboardData(){
+  try {
+    const { data: mealsData } = await db.from('meals').select('meal_count');
+    let totalMeals = mealsData ? mealsData.reduce((sum, item) => sum + (Number(item.meal_count) || 0), 0) : 0;
+    document.getElementById("totalMealsStat").textContent = totalMeals;
 
-/* =========================
-   TEMPORARY MENU
-========================= */
+    const { data: expData } = await db.from('expenses').select('amount');
+    let totalExpense = expData ? expData.reduce((sum, item) => sum + (Number(item.amount) || 0), 0) : 0;
+    document.getElementById("totalExpenseStat").textContent = "৳ " + totalExpense;
+
+    const { count: memberCount } = await db.from('profiles').select('*', { count: 'exact', head: true });
+    document.getElementById("totalMembersStat").textContent = memberCount || 1;
+
+    let mealRate = totalMeals > 0 ? (totalExpense / totalMeals).toFixed(2) : 0;
+    document.getElementById("mealRateStat").textContent = "৳ " + mealRate;
+  } catch(err) {
+    console.error("Error loading stats:", err);
+  }
+}
+
+/* MEAL MODAL */
+function openMealModal(){
+  const container = document.getElementById("modalContainer");
+  const today = new Date().toISOString().split('T')[0];
+  container.innerHTML = `
+    <div class="modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>🍚 মিল এন্ট্রি করুন</h3>
+          <button class="close-btn" onclick="closeModal()">✕</button>
+        </div>
+        <label>তারিখ</label>
+        <input type="date" id="mealDate" value="${today}">
+        <label>মিলের সংখ্যা</label>
+        <input type="number" id="mealCount" placeholder="যেমন: ২" value="1" min="0" step="0.5">
+        <button class="primary-btn" onclick="saveMeal()">মিলের হিসাব সেভ করুন</button>
+      </div>
+    </div>
+  `;
+}
+
+async function saveMeal(){
+  const meal_date = document.getElementById("mealDate").value;
+  const meal_count = parseFloat(document.getElementById("mealCount").value);
+  if(!meal_date || isNaN(meal_count)){ alert("সঠিক তথ্য দিন।"); return; }
+
+  const { error } = await db.from('meals').insert([{ user_id: currentUser.id, meal_date, meal_count }]);
+  if(error){ alert("ত্রুটি: " + error.message); } 
+  else { alert("সফলভাবে মিল সেভ হয়েছে!"); closeModal(); loadDashboardData(); }
+}
+
+/* EXPENSE MODAL */
+function openExpenseModal(){
+  const container = document.getElementById("modalContainer");
+  const today = new Date().toISOString().split('T')[0];
+  container.innerHTML = `
+    <div class="modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>💰 খরচ বা বাজার এন্ট্রি</h3>
+          <button class="close-btn" onclick="closeModal()">✕</button>
+        </div>
+        <label>তারিখ</label>
+        <input type="date" id="expDate" value="${today}">
+        <label>বিবরণ</label>
+        <input type="text" id="expTitle" placeholder="যেমন: চাল ও ডাল বাজার">
+        <label>টাকার পরিমাণ (৳)</label>
+        <input type="number" id="expAmount" placeholder="যেমন: ৫০০">
+        <button class="primary-btn" onclick="saveExpense()">খরচ সেভ করুন</button>
+      </div>
+    </div>
+  `;
+}
+
+async function saveExpense(){
+  const expense_date = document.getElementById("expDate").value;
+  const title = document.getElementById("expTitle").value.trim();
+  const amount = parseFloat(document.getElementById("expAmount").value);
+  if(!expense_date || !title || isNaN(amount)){ alert("সব তথ্য সঠিকভাবে পূরণ করুন।"); return; }
+
+  const { error } = await db.from('expenses').insert([{ user_id: currentUser.id, expense_date, title, amount }]);
+  if(error){ alert("ত্রুটি: " + error.message); } 
+  else { alert("সফলভাবে খরচ সেভ হয়েছে!"); closeModal(); loadDashboardData(); }
+}
+
+/* MEMBERS MODAL */
+async function openMembersModal(){
+  const container = document.getElementById("modalContainer");
+  container.innerHTML = `
+    <div class="modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>👥 সদস্য তালিকা</h3>
+          <button class="close-btn" onclick="closeModal()">✕</button>
+        </div>
+        <div id="membersListContent">লোড হচ্ছে...</div>
+      </div>
+    </div>
+  `;
+
+  const { data, error } = await db.from('profiles').select('full_name, email');
+  const listDiv = document.getElementById("membersListContent");
+
+  if(error){ listDiv.innerHTML = "<p>ডাটা লোড করতে সমস্যা হয়েছে।</p>"; return; }
+  if(!data || data.length === 0){ listDiv.innerHTML = "<p>কোনো সদস্য পাওয়া যায়নি।</p>"; return; }
+
+  let html = `<table><tr><th>নাম</th><th>Email</th></tr>`;
+  data.forEach(m => {
+    html += `<tr><td>${m.full_name || 'Member'}</td><td>${m.email || '-'}</td></tr>`;
+  });
+  html += `</table>`;
+  listDiv.innerHTML = html;
+}
+
+/* PAYMENT MODAL */
+function openPaymentModal(){
+  const container = document.getElementById("modalContainer");
+  const today = new Date().toISOString().split('T')[0];
+  container.innerHTML = `
+    <div class="modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>💳 টাকা জমা এন্ট্রি</h3>
+          <button class="close-btn" onclick="closeModal()">✕</button>
+        </div>
+        <label>তারিখ</label>
+        <input type="date" id="payDate" value="${today}">
+        <label>জমার পরিমাণ (৳)</label>
+        <input type="number" id="payAmount" placeholder="যেমন: ১০০০">
+        <button class="primary-btn" onclick="savePayment()">টাকা জমা সেভ করুন</button>
+      </div>
+    </div>
+  `;
+}
+
+async function savePayment(){
+  const payment_date = document.getElementById("payDate").value;
+  const amount = parseFloat(document.getElementById("payAmount").value);
+  if(!payment_date || isNaN(amount)){ alert("সঠিক পরিমাণ লিখুন।"); return; }
+
+  const { error } = await db.payments.insert([{ user_id: currentUser.id, payment_date, amount }]);
+  if(error){ alert("ত্রুটি: " + error.message); } 
+  else { alert("সফলভাবে পেমেন্ট সেভ হয়েছে!"); closeModal(); }
+}
+
+/* SHOPPING MODAL */
+async function openShoppingModal(){
+  const container = document.getElementById("modalContainer");
+  container.innerHTML = `
+    <div class="modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>🛒 বাজারের তালিকা</h3>
+          <button class="close-btn" onclick="closeModal()">✕</button>
+        </div>
+        <label>বাজারের আইটেম</label>
+        <input type="text" id="shopItem" placeholder="যেমন: ডিম, তেল, পেঁয়াজ">
+        <button class="primary-btn" onclick="saveShoppingItem()">তালিকায় যোগ করুন</button>
+        <div id="shoppingListContent" style="margin-top:15px;">লোড হচ্ছে...</div>
+      </div>
+    </div>
+  `;
+  loadShoppingItems();
+}
+
+async function loadShoppingItems(){
+  const { data, error } = await db.from('shopping_items').select('*').order('created_at', { ascending: false });
+  const listDiv = document.getElementById("shoppingListContent");
+  if(error || !data){ listDiv.innerHTML = "<p>তালিকা খালি আছে।</p>"; return; }
+
+  let html = `<table><tr><th>আইটেম</th></tr>`;
+  data.forEach(item => {
+    html += `<tr><td>${item.item_name || item.title || 'বাজার'}</td></tr>`;
+  });
+  html += `</table>`;
+  listDiv.innerHTML = html;
+}
+
+async function saveShoppingItem(){
+  const item_name = document.getElementById("shopItem").value.trim();
+  if(!item_name){ alert("আইটেমের নাম লিখুন।"); return; }
+
+  const { error } = await db.from('shopping_items').insert([{ user_id: currentUser.id, item_name }]);
+  if(error){ alert("ত্রুটি: " + error.message); } 
+  else { 
+    document.getElementById("shopItem").value = "";
+    loadShoppingItems(); 
+  }
+}
+
+/* NOTICE MODAL */
+async function openNoticeModal(){
+  const container = document.getElementById("modalContainer");
+  container.innerHTML = `
+    <div class="modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>📢 নোটিশ বোর্ড</h3>
+          <button class="close-btn" onclick="closeModal()">✕</button>
+        </div>
+        <div id="noticeListContent">লোড হচ্ছে...</div>
+      </div>
+    </div>
+  `;
+
+  const { data, error } = await db.from('notices').select('*').order('created_at', { ascending: false });
+  const listDiv = document.getElementById("noticeListContent");
+  if(error || !data || data.length === 0){
+    listDiv.innerHTML = "<p>বর্তমানে কোনো নতুন নোটিশ নেই।</p>";
+    return;
+  }
+
+  let html = `<table><tr><th>নোটিশ</th></tr>`;
+  data.forEach(n => {
+    html += `<tr><td>${n.title || n.message || 'নোটিশ'}</td></tr>`;
+  });
+  html += `</table>`;
+  listDiv.innerHTML = html;
+}
+
+function closeModal(){
+  document.getElementById("modalContainer").innerHTML = "";
+}
 
 function comingSoon(page){
-
-alert(
-page +
-" বিভাগটি আমরা পরের ধাপে তৈরি করব। 🚀"
-);
-
+  alert(page + " বিভাগটি আমরা পরের ধাপে তৈরি করব। 🚀");
 }
 
-
-/* =========================
-   START
-========================= */
-
 checkSession();
-
 </script>
 
 </body>
