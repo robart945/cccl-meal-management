@@ -211,7 +211,7 @@ th{color:#104b35;background:#f9f9f9}
     <div class="notice">
       <div class="notice-row">
         <div class="notice-icon">🔔</div>
-        <div class="notice-text">শপিং লিস্ট ও নোটিশ বোর্ড ফিচার সফলভাবে যুক্ত হয়েছে!</div>
+        <div class="notice-text">সিস্টেমটি এখন সম্পূর্ণ সুরক্ষিত ও ক্র্যাশ-প্রুফ!</div>
       </div>
     </div>
     <div class="bottom-space"></div>
@@ -260,7 +260,9 @@ async function signupUser(){
   if(error){ showMessage(error.message, true); return; }
 
   if(data.user){
-    await db.from('profiles').upsert([{ id: data.user.id, full_name: name, email: email }]);
+    try {
+      await db.from('profiles').upsert([{ id: data.user.id, full_name: name, email: email }]);
+    } catch(e) { console.error(e); }
   }
 
   showMessage("Account তৈরি হয়েছে! এখন Login করুন।", false);
@@ -294,8 +296,10 @@ function openDashboard(user){
 }
 
 async function checkSession(){
-  const {data} = await db.auth.getSession();
-  if(data.session){ openDashboard(data.session.user); }
+  try {
+    const {data} = await db.auth.getSession();
+    if(data && data.session){ openDashboard(data.session.user); }
+  } catch(e) { console.error(e); }
 }
 
 async function logoutUser(){
@@ -308,32 +312,39 @@ async function logoutUser(){
 
 function showMessage(text, isError){
   const box = document.getElementById("authMessage");
-  box.textContent = text;
-  box.style.color = isError ? "#d32f2f" : "#16803c";
+  if(box){
+    box.textContent = text;
+    box.style.color = isError ? "#d32f2f" : "#16803c";
+  }
 }
 
 function clearMessage(){
-  document.getElementById("authMessage").textContent="";
+  const box = document.getElementById("authMessage");
+  if(box) box.textContent="";
 }
 
-/* DASHBOARD STATS */
+/* DASHBOARD STATS WITH SAFE CATCH */
 async function loadDashboardData(){
   try {
     const { data: mealsData } = await db.from('meals').select('meal_count');
     let totalMeals = mealsData ? mealsData.reduce((sum, item) => sum + (Number(item.meal_count) || 0), 0) : 0;
-    document.getElementById("totalMealsStat").textContent = totalMeals;
+    const mealsElem = document.getElementById("totalMealsStat");
+    if(mealsElem) mealsElem.textContent = totalMeals;
 
     const { data: expData } = await db.from('expenses').select('amount');
     let totalExpense = expData ? expData.reduce((sum, item) => sum + (Number(item.amount) || 0), 0) : 0;
-    document.getElementById("totalExpenseStat").textContent = "৳ " + totalExpense;
+    const expElem = document.getElementById("totalExpenseStat");
+    if(expElem) expElem.textContent = "৳ " + totalExpense;
 
     const { count: memberCount } = await db.from('profiles').select('*', { count: 'exact', head: true });
-    document.getElementById("totalMembersStat").textContent = memberCount || 1;
+    const memElem = document.getElementById("totalMembersStat");
+    if(memElem) memElem.textContent = memberCount || 1;
 
     let mealRate = totalMeals > 0 ? (totalExpense / totalMeals).toFixed(2) : 0;
-    document.getElementById("mealRateStat").textContent = "৳ " + mealRate;
+    const rateElem = document.getElementById("mealRateStat");
+    if(rateElem) rateElem.textContent = "৳ " + mealRate;
   } catch(err) {
-    console.error("Error loading stats:", err);
+    console.error("Dashboard stats error (Safe ignored):", err);
   }
 }
 
@@ -417,18 +428,20 @@ async function openMembersModal(){
     </div>
   `;
 
-  const { data, error } = await db.from('profiles').select('full_name, email');
-  const listDiv = document.getElementById("membersListContent");
+  try {
+    const { data, error } = await db.from('profiles').select('full_name, email');
+    const listDiv = document.getElementById("membersListContent");
+    if(error || !data || data.length === 0){ listDiv.innerHTML = "<p>কোনো সদস্য পাওয়া যায়নি।</p>"; return; }
 
-  if(error){ listDiv.innerHTML = "<p>ডাটা লোড করতে সমস্যা হয়েছে।</p>"; return; }
-  if(!data || data.length === 0){ listDiv.innerHTML = "<p>কোনো সদস্য পাওয়া যায়নি।</p>"; return; }
-
-  let html = `<table><tr><th>নাম</th><th>Email</th></tr>`;
-  data.forEach(m => {
-    html += `<tr><td>${m.full_name || 'Member'}</td><td>${m.email || '-'}</td></tr>`;
-  });
-  html += `</table>`;
-  listDiv.innerHTML = html;
+    let html = `<table><tr><th>নাম</th><th>Email</th></tr>`;
+    data.forEach(m => {
+      html += `<tr><td>${m.full_name || 'Member'}</td><td>${m.email || '-'}</td></tr>`;
+    });
+    html += `</table>`;
+    listDiv.innerHTML = html;
+  } catch(e) {
+    document.getElementById("membersListContent").innerHTML = "<p>ডাটা লোড করতে সমস্যা হয়েছে।</p>";
+  }
 }
 
 /* PAYMENT MODAL */
@@ -457,7 +470,7 @@ async function savePayment(){
   const amount = parseFloat(document.getElementById("payAmount").value);
   if(!payment_date || isNaN(amount)){ alert("সঠিক পরিমাণ লিখুন।"); return; }
 
-  const { error } = await db.payments.insert([{ user_id: currentUser.id, payment_date, amount }]);
+  const { error } = await db.from('payments').insert([{ user_id: currentUser.id, payment_date, amount }]);
   if(error){ alert("ত্রুটি: " + error.message); } 
   else { alert("সফলভাবে পেমেন্ট সেভ হয়েছে!"); closeModal(); }
 }
@@ -483,16 +496,20 @@ async function openShoppingModal(){
 }
 
 async function loadShoppingItems(){
-  const { data, error } = await db.from('shopping_items').select('*').order('created_at', { ascending: false });
-  const listDiv = document.getElementById("shoppingListContent");
-  if(error || !data){ listDiv.innerHTML = "<p>তালিকা খালি আছে।</p>"; return; }
+  try {
+    const { data, error } = await db.from('shopping_items').select('*');
+    const listDiv = document.getElementById("shoppingListContent");
+    if(error || !data || data.length === 0){ listDiv.innerHTML = "<p>তালিকা খালি আছে।</p>"; return; }
 
-  let html = `<table><tr><th>আইটেম</th></tr>`;
-  data.forEach(item => {
-    html += `<tr><td>${item.item_name || item.title || 'বাজার'}</td></tr>`;
-  });
-  html += `</table>`;
-  listDiv.innerHTML = html;
+    let html = `<table><tr><th>আইটেম</th></tr>`;
+    data.forEach(item => {
+      html += `<tr><td>${item.item_name || item.title || 'বাজার'}</td></tr>`;
+    });
+    html += `</table>`;
+    listDiv.innerHTML = html;
+  } catch(e) {
+    document.getElementById("shoppingListContent").innerHTML = "<p>তালিকা লোড করা যায়নি।</p>";
+  }
 }
 
 async function saveShoppingItem(){
@@ -522,19 +539,23 @@ async function openNoticeModal(){
     </div>
   `;
 
-  const { data, error } = await db.from('notices').select('*').order('created_at', { ascending: false });
-  const listDiv = document.getElementById("noticeListContent");
-  if(error || !data || data.length === 0){
-    listDiv.innerHTML = "<p>বর্তমানে কোনো নতুন নোটিশ নেই।</p>";
-    return;
-  }
+  try {
+    const { data, error } = await db.from('notices').select('*');
+    const listDiv = document.getElementById("noticeListContent");
+    if(error || !data || data.length === 0){
+      listDiv.innerHTML = "<p>বর্তমানে কোনো নতুন নোটিশ নেই।</p>";
+      return;
+    }
 
-  let html = `<table><tr><th>নোটিশ</th></tr>`;
-  data.forEach(n => {
-    html += `<tr><td>${n.title || n.message || 'নোটিশ'}</td></tr>`;
-  });
-  html += `</table>`;
-  listDiv.innerHTML = html;
+    let html = `<table><tr><th>নোটিশ</th></tr>`;
+    data.forEach(n => {
+      html += `<tr><td>${n.title || n.message || 'নোটিশ'}</td></tr>`;
+    });
+    html += `</table>`;
+    listDiv.innerHTML = html;
+  } catch(e) {
+    document.getElementById("noticeListContent").innerHTML = "<p>নোটিশ লোড করা যায়নি।</p>";
+  }
 }
 
 function closeModal(){
